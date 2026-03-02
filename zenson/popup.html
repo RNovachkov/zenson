@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>ZenSON</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      width:660px;min-height:460px;
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      background:#0f1117;color:#e2e8f0;display:flex;flex-direction:column;
+    }
+    header{
+      display:flex;align-items:center;gap:10px;
+      padding:12px 18px 10px;border-bottom:1px solid #1e2535;
+    }
+    .logo{
+      width:27px;height:27px;
+      background:linear-gradient(135deg,#6366f1,#8b5cf6);
+      border-radius:7px;display:flex;align-items:center;justify-content:center;
+      font-size:13px;font-weight:700;color:#fff;flex-shrink:0;
+    }
+    header h1{font-size:14px;font-weight:600;color:#f1f5f9;letter-spacing:-.2px}
+    header .ver{margin-left:auto;font-size:11px;color:#475569;font-weight:500}
+
+    .toolbar{
+      display:flex;gap:7px;padding:8px 13px;
+      border-bottom:1px solid #1e2535;background:#0d1018;align-items:center;
+    }
+    .btn{
+      display:flex;align-items:center;gap:4px;
+      padding:5px 11px;font-size:11px;font-weight:600;
+      border-radius:6px;border:none;cursor:pointer;transition:all .15s;
+    }
+    .btn-primary{background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff}
+    .btn-primary:hover{opacity:.88;transform:translateY(-1px)}
+    .btn-secondary{background:#1e2535;color:#94a3b8;border:1px solid #2d3748}
+    .btn-secondary:hover{background:#253047;color:#cbd5e1}
+    .btn-danger{background:#2a1521;color:#f87171;border:1px solid #3d1c28;margin-left:auto}
+    .btn-danger:hover{background:#3d1c28}
+    .indent-group{display:flex;align-items:center;gap:5px;margin-left:3px}
+    .indent-group label{font-size:11px;color:#64748b}
+    .indent-select{
+      background:#1e2535;color:#94a3b8;border:1px solid #2d3748;
+      border-radius:5px;padding:4px 6px;font-size:11px;cursor:pointer;
+    }
+
+    .panels{display:flex;flex:1;min-height:370px}
+    .panel{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+    .panel-label{
+      font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;
+      color:#475569;padding:6px 13px 5px;background:#0d1018;border-bottom:1px solid #1a2030;
+      display:flex;align-items:center;gap:6px;
+    }
+    .panel-label em{font-style:italic;color:#3d5a3e;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0}
+
+    textarea{
+      flex:1;background:#0f1117;color:#e2e8f0;border:none;outline:none;resize:none;
+      font-family:'Cascadia Code','Fira Code','JetBrains Mono',Menlo,monospace;
+      font-size:12px;line-height:1.65;padding:10px 13px;tab-size:2;
+    }
+    textarea::placeholder{color:#2a3347}
+
+    .divider{width:1px;background:#1e2535;flex-shrink:0}
+
+    /* Output area */
+    #output-panel{background:#0b0e16}
+    .output-wrap{
+      flex:1;display:flex;overflow:auto;background:#0b0e16;
+      font-family:'Cascadia Code','Fira Code','JetBrains Mono',Menlo,monospace;
+      font-size:12px;line-height:1.65;
+    }
+    #line-gutter{
+      padding:10px 8px 10px 6px;text-align:right;color:#2a3a50;
+      background:#080b11;border-right:1px solid #141c28;
+      user-select:none;white-space:pre;flex-shrink:0;min-width:34px;
+      font-size:11px;line-height:1.65;
+    }
+    #output{padding:10px 4px 10px 10px;flex:1;min-width:0;overflow:auto}
+
+    /* Tree renderer styles (shared) */
+    .jv-line{display:block;white-space:nowrap;line-height:1.65}
+    .jv-key{color:#7dd3fc}
+    .jv-str{color:#86efac}
+    .jv-num{color:#fb923c}
+    .jv-bool{color:#a78bfa}
+    .jv-null{color:#94a3b8}
+    .jv-punct{color:#3d5068}
+
+    /* Date */
+    .jv-date{
+      color:#f0c070;cursor:pointer;
+      border-bottom:1px dashed #7a6030;transition:color .1s;
+    }
+    .jv-date:hover{color:#ffd580;border-bottom-color:#c09040}
+    .jv-comment{color:#3a5c3e;font-style:italic;user-select:none;margin-left:2px}
+    .jv-comment.changed{color:#5a9460}
+
+    /* Collapsible */
+    .jv-toggle{
+      display:inline-block;width:14px;text-align:center;
+      cursor:pointer;color:#475569;user-select:none;
+      font-size:10px;margin-right:2px;
+      transition:transform .15s;flex-shrink:0;
+    }
+    .jv-toggle:hover{color:#94a3b8}
+    .jv-toggle.collapsed{transform:rotate(-90deg)}
+    /* indent spacer */
+    .jv-indent{display:inline-block;width:var(--indent-w,16px)}
+
+    .jv-body{display:block}
+    .jv-body.hidden{display:none}
+
+    .jv-collapsed-hint{
+      color:#475569;font-style:italic;cursor:pointer;user-select:none;
+    }
+    .jv-collapsed-hint:hover{color:#64748b}
+
+    /* Status bar */
+    .status-bar{
+      display:flex;align-items:center;gap:10px;
+      padding:5px 13px;font-size:11px;color:#475569;
+      background:#0a0d14;border-top:1px solid #1a2030;
+    }
+    .status-dot{width:7px;height:7px;border-radius:50%;background:#334155;flex-shrink:0}
+    .status-dot.ok{background:#22c55e}
+    .status-dot.err{background:#ef4444}
+    #status-text{flex:1}
+    .copy-btn{
+      background:transparent;border:1px solid #1e2535;color:#64748b;
+      border-radius:4px;padding:2px 8px;font-size:10px;cursor:pointer;font-weight:600;
+      transition:all .15s;
+    }
+    .copy-btn:hover{border-color:#6366f1;color:#818cf8}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">{}</div>
+  <h1>ZenSON</h1>
+  <span class="ver">v1.2</span>
+</header>
+
+<div class="toolbar">
+  <button class="btn btn-primary" id="btn-format">▶ Format</button>
+  <button class="btn btn-secondary" id="btn-minify">⇢ Minify</button>
+  <div class="indent-group">
+    <label>Indent</label>
+    <select class="indent-select" id="indent-select">
+      <option value="2">2 spaces</option>
+      <option value="4">4 spaces</option>
+      <option value="tab">Tab</option>
+    </select>
+  </div>
+  <button class="btn btn-secondary" id="btn-page" title="Prettify raw JSON page">🌐 Page</button>
+  <button class="btn btn-danger" id="btn-clear">✕ Clear</button>
+</div>
+
+<div class="panels">
+  <div class="panel">
+    <div class="panel-label">Input</div>
+    <textarea id="input" placeholder='Paste JSON here…&#10;&#10;{"created":"2024-01-15T08:30:00Z","ts":1706745600}'></textarea>
+  </div>
+  <div class="divider"></div>
+  <div class="panel" id="output-panel">
+    <div class="panel-label">
+      Output
+      <em>· ▶ collapse nodes · click 🟡 date to cycle all</em>
+    </div>
+    <div class="output-wrap">
+      <div id="line-gutter"></div>
+      <div id="output"></div>
+    </div>
+  </div>
+</div>
+
+<div class="status-bar">
+  <div class="status-dot" id="status-dot"></div>
+  <span id="status-text">Ready</span>
+  <button class="copy-btn" id="btn-copy">Copy</button>
+</div>
+
+<script src="renderer.js"></script>
+<script src="popup.js"></script>
+</body>
+</html>
