@@ -2,6 +2,7 @@
 
 A lightweight, zero-dependency browser extension that instantly beautifies JSON — whether you paste it into the popup or land on a raw JSON page. Built with pure vanilla JavaScript, no build tools or npm packages required.
 
+![screenshot](zenson-screenshot.jpg)
 ---
 
 ## Features
