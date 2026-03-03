@@ -1,6 +1,6 @@
 # ZenSON JSON Prettifier
 
-![logo](logo-small.png)
+![logo](zenson/icons/icon128.png)
 
 A lightweight, zero-dependency browser extension that instantly beautifies JSON — whether you paste it into the popup or land on a raw JSON page. Built with pure vanilla JavaScript, no build tools or npm packages required.
 
